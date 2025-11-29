@@ -55,3 +55,4 @@
 });
 (class { });
 (class extends Super() { });
+!class { } ();

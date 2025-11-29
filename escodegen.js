@@ -1943,7 +1943,9 @@
                 return ['(', result, ')'];
             }
 
-            isIIFE = expr.callee.id === null && expr.callee.params.length === 0;
+            var isClassExpressionCallee = expr.callee.type === 'ClassExpression';
+
+            isIIFE = !isClassExpressionCallee && expr.callee.id === null && expr.callee.params.length === 0;
 
             return isIIFE
                 ? parenthesize(result, precedence, Precedence.Call)
