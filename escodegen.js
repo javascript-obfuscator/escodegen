@@ -890,6 +890,41 @@
         return prefix;
     }
 
+    function generateImportAttributes(stmt, that) {
+        var result = [], attributes, keyword, i, iz, attr;
+
+        // Check for attributes (ES2025 "with" syntax) or assertions (deprecated "assert" syntax)
+        attributes = stmt.attributes || stmt.assertions;
+
+        if (!attributes || attributes.length === 0) {
+            return result;
+        }
+
+        // Determine the keyword based on which property exists
+        keyword = stmt.attributes ? 'with' : 'assert';
+
+        result.push(space + keyword + space + '{' + space);
+
+        for (i = 0, iz = attributes.length; i < iz; ++i) {
+            attr = attributes[i];
+            // Import attribute has key and value
+            // key can be Identifier or Literal
+            if (attr.key.type === Syntax.Identifier) {
+                result.push(attr.key.name);
+            } else {
+                result.push(that.generateExpression(attr.key, Precedence.Sequence, E_TTT));
+            }
+            result.push(':' + space);
+            result.push(that.generateExpression(attr.value, Precedence.Sequence, E_TTT));
+            if (i + 1 < iz) {
+                result.push(',' + space);
+            }
+        }
+
+        result.push(space + '}');
+        return result;
+    }
+
     CodeGenerator.prototype.generatePattern = function (node, precedence, flags) {
         if (node.type === Syntax.Identifier) {
             return generateIdentifier(node);
@@ -1271,9 +1306,11 @@
                     result = join(result, [
                         'from' + space,
                         // ModuleSpecifier
-                        this.generateExpression(stmt.source, Precedence.Sequence, E_TTT),
-                        this.semicolon(flags)
+                        this.generateExpression(stmt.source, Precedence.Sequence, E_TTT)
                     ]);
+                    // Add import attributes if present (ES2025)
+                    result = result.concat(generateImportAttributes(stmt, this));
+                    result.push(this.semicolon(flags));
                 } else {
                     result.push(this.semicolon(flags));
                 }
@@ -1295,9 +1332,13 @@
             result = join(result, [
                 'from' + space,
                 // ModuleSpecifier
-                this.generateExpression(stmt.source, Precedence.Sequence, E_TTT),
-                this.semicolon(flags)
+                this.generateExpression(stmt.source, Precedence.Sequence, E_TTT)
             ]);
+
+            // Add import attributes if present (ES2025)
+            result = result.concat(generateImportAttributes(stmt, this));
+
+            result.push(this.semicolon(flags));
 
             return result;
         },
@@ -1373,13 +1414,16 @@
             // ModuleSpecifier is StringLiteral.
             if (stmt.specifiers.length === 0) {
                 // import ModuleSpecifier ;
-                return [
+                result = [
                     'import',
                     space,
                     // ModuleSpecifier
-                    this.generateExpression(stmt.source, Precedence.Sequence, E_TTT),
-                    this.semicolon(flags)
+                    this.generateExpression(stmt.source, Precedence.Sequence, E_TTT)
                 ];
+                // Add import attributes if present (ES2025)
+                result = result.concat(generateImportAttributes(stmt, this));
+                result.push(this.semicolon(flags));
+                return result;
             }
 
             // import ImportClause FromClause ;
@@ -1443,9 +1487,13 @@
             result = join(result, [
                 'from' + space,
                 // ModuleSpecifier
-                this.generateExpression(stmt.source, Precedence.Sequence, E_TTT),
-                this.semicolon(flags)
+                this.generateExpression(stmt.source, Precedence.Sequence, E_TTT)
             ]);
+
+            // Add import attributes if present (ES2025)
+            result = result.concat(generateImportAttributes(stmt, this));
+
+            result.push(this.semicolon(flags));
             return result;
         },
 
