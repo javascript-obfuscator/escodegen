@@ -1,0 +1,2 @@
+import config from './config.json' assert { type: 'json' };
+import data from './data.json' assert { type: 'json', integrity: 'sha384-abc' };

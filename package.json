@@ -1,6 +1,6 @@
 {
     "name": "@javascript-obfuscator/escodegen",
-    "description": "`escodegen` fork for `javascript-obfuscator``",
+    "description": "`escodegen` fork for `javascript-obfuscator`",
     "homepage": "http://github.com/estools/escodegen",
     "main": "escodegen.js",
     "files": [
@@ -10,7 +10,7 @@
         "escodegen.js",
         "package.json"
     ],
-    "version": "2.3.1",
+    "version": "2.4.0",
     "engines": {
         "node": ">=6.0"
     },
@@ -41,6 +41,7 @@
     },
     "devDependencies": {
         "acorn": "^8.7.0",
+        "acorn-import-attributes": "^1.9.5",
         "bluebird": "^3.4.7",
         "bower-registry-client": "^1.0.0",
         "chai": "^4.2.0",
