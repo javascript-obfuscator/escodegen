@@ -555,10 +555,11 @@
         }
 
         leftCharCode = leftSource.charCodeAt(leftSource.length - 1);
-        rightCharCode = rightSource.charCodeAt(0);
+        rightCharCode = rightSource.codePointAt(0);
 
         if ((leftCharCode === 0x2B  /* + */ || leftCharCode === 0x2D  /* - */) && leftCharCode === rightCharCode ||
             esutils.code.isIdentifierPartES5(leftCharCode) && esutils.code.isIdentifierPartES5(rightCharCode) ||
+            esutils.code.isIdentifierPartES5(leftCharCode) && rightCharCode > 0xFFFF && esutils.code.isIdentifierPartES6(rightCharCode) ||
             leftCharCode === 0x2F  /* / */ && rightCharCode === 0x69  /* i */) { // infix word operators all start with `i`
             return [left, noEmptySpace(), right];
         } else if (esutils.code.isWhiteSpace(leftCharCode) || esutils.code.isLineTerminator(leftCharCode) ||
