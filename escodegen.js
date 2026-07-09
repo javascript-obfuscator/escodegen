@@ -975,8 +975,8 @@
         return result;
     };
 
-    CodeGenerator.prototype.generateFunctionBody = function (node) {
-        var result, expr;
+    CodeGenerator.prototype.generateFunctionBody = function (node, flags) {
+        var result, expr, bodyFlags;
 
         result = this.generateFunctionParams(node);
 
@@ -987,7 +987,11 @@
 
         if (node.expression) {
             result.push(space);
-            expr = this.generateExpression(node.body, Precedence.Assignment, E_TTT);
+            bodyFlags = E_TTT;
+            if (flags !== undefined && !(flags & F_ALLOW_IN)) {
+                bodyFlags &= ~F_ALLOW_IN;
+            }
+            expr = this.generateExpression(node.body, Precedence.Assignment, bodyFlags);
             if (expr.toString().charAt(0) === '{') {
                 expr = ['(', expr, ')'];
             }
@@ -1882,7 +1886,7 @@
         },
 
         ArrowFunctionExpression: function (expr, precedence, flags) {
-            return parenthesize(this.generateFunctionBody(expr), Precedence.ArrowFunction, precedence);
+            return parenthesize(this.generateFunctionBody(expr, flags), Precedence.ArrowFunction, precedence);
         },
 
         ConditionalExpression: function (expr, precedence, flags) {

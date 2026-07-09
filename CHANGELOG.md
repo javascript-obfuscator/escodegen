@@ -1,3 +1,7 @@
+v2.4.2
+---
+* Preserve parentheses around `in` in arrow concise body inside for-init
+
 v2.3.1
 ---
 * Fixed error when ClassExpression is the CallExpression callee

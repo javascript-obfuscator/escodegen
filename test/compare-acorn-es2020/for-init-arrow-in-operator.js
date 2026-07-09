@@ -1,0 +1,5 @@
+for (a = (t, e) => (t in e) ? 0 : 1;;) {
+}
+for (x = (b in c) ? 0 : 1;;) {
+}
+var f = (t, e) => t in e;
